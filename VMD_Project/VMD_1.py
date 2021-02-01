@@ -2,6 +2,7 @@ import win32com.client #Reading Outlook
 import os #Folder operations
 import datetime #Timestamp
 import pandas as pd #We will use it for reading XLS / XLSX and writing to CSV
+import numpy as np #To check empty values
 
 
 #Connect to Outlook
@@ -29,7 +30,8 @@ def readExcel(excelFile):
         vendorID = df.iloc[2,2]
         changeReason = df.iloc[10,2]
         requestor = df.iloc[11,2]
-        if vendorID == '' or changeReason == '' or requestor == '' :
+        #We are using numpy as Pandas assigns 'nan' in case no value available
+        if np.isnan(vendorID) or np.isnan(changeReason) or np.isnan(requestor):
             print('Mandatory fields missing')
         else:
             #Extract all fields from an attachment
@@ -40,7 +42,7 @@ def readExcel(excelFile):
             vendorPhone = df.iloc[7,2]
             vendorBankAccount = df.iloc[8,2]
 
-            #Build 
+            #Prepare data for DataFrame
             data = [{'Sender' : sender,'Subject' : subject, 'Attachment': excelPath, 'VendorID' : vendorID, 'ChangeReason' : changeReason, 'Requestor' : requestor, 
             'VendorName': vendorName,'VendorAddress' : vendorAdress, 'VendorPerson' : vendorPerson, 'VendorEmail' : vendorEmail, 'VendorPhone' : vendorPhone, 
             'VendorBankAccount' : vendorBankAccount}]
